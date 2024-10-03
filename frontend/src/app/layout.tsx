@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "solbounty",
+  title: "SolPayouts",
   description: "bounties on GitHub with Solana",
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           {children}
-          <Toaster 
+          <Toaster
             position="bottom-right"
             reverseOrder={false}
             toastOptions={{

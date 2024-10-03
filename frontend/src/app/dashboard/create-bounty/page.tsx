@@ -19,10 +19,12 @@ import { PlusOutlinedIcon } from "@/icons";
 import toast from "react-hot-toast";
 import { API_URL } from "@/lib/constants";
 
-const githubIssueSchema = z.string().regex(
-  /^https:\/\/github\.com\/([\w-]+)\/([\w-]+)\/issues\/(\d+)$/,
-  'Invalid GitHub issue URL'
-);
+const githubIssueSchema = z
+  .string()
+  .regex(
+    /^https:\/\/github\.com\/([\w-]+)\/([\w-]+)\/issues\/(\d+)$/,
+    "Invalid GitHub issue URL"
+  );
 
 interface Token {
   name: string;
@@ -41,12 +43,14 @@ export default function CreateBounty() {
 
   const [tokenAmount, setTokenAmount] = useState<string | null>(null);
   const [token, setToken] = useState<Token | null>({
-    name: 'USDC',
-    symbol: 'USDC',
+    name: "USDC",
+    symbol: "USDC",
     logo: <USDCLogo height="14" />,
   });
 
-  const handleIssueUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIssueUrlChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const inputValue = e.target.value;
     setIssueUrl(inputValue);
 
@@ -78,9 +82,9 @@ export default function CreateBounty() {
       setIssue(null);
       setLoading(false);
       setError(
-        err instanceof Error && err.message !== 'Network Error'
+        err instanceof Error && err.message !== "Network Error"
           ? err.message
-          : 'Unable to fetch issue details'
+          : "Unable to fetch issue details"
       );
     } finally {
       setLoading(false);
@@ -89,33 +93,34 @@ export default function CreateBounty() {
 
   const handleTokenAmountChange = (e: any) => {
     const inputValue = e.target.value;
-    if (/^\d*\.?\d*$/.test(inputValue)) { // Regex to allow only numbers and decimal points
+    if (/^\d*\.?\d*$/.test(inputValue)) {
+      // Regex to allow only numbers and decimal points
       setTokenAmount(inputValue);
     }
-  }
+  };
 
   const handleTokenChange = (e: any) => {
     switch (e.target.value) {
-      case 'USDC':
+      case "USDC":
         const USDCToken = {
-          name: 'USDC',
-          symbol: 'USDC',
+          name: "USDC",
+          symbol: "USDC",
           logo: <USDCLogo height="14" />,
-        }
+        };
         setToken(USDCToken);
         break;
-      case 'SOL':
+      case "SOL":
         const SOLToken = {
-          name: 'Solana',
-          symbol: 'SOL',
+          name: "Solana",
+          symbol: "SOL",
           logo: <SolanaLogo height="12" />,
-        }
+        };
         setToken(SOLToken);
         break;
       default:
-        console.error('Invalid token selected');
+        console.error("Invalid token selected");
     }
-  }
+  };
 
   const handleCreateBounty = async () => {
     setIsSubmitting(true);
@@ -123,29 +128,33 @@ export default function CreateBounty() {
       setIsDirty(true);
       return;
     }
-    
+
     // TODO: do not allow the same issue to be submitted twice, create one api for fetching and ensuring any bounties as well directly from backend
     // TODO: handle the duplicate entry in frontend as well
     // FUTURE: allow users to put multiple entries and show the total amount via extension
-    const createBountyPromise = axios.post(`${API_URL}/v1/bounty`, {
-      issue_url: issueUrl,
-      amount: Number(tokenAmount),
-      token: token?.symbol,
-    }, {
-      withCredentials: true
-    });
+    const createBountyPromise = axios.post(
+      `${API_URL}/v1/bounty`,
+      {
+        issue_url: issueUrl,
+        amount: Number(tokenAmount),
+        token: token?.symbol,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     toast.promise(createBountyPromise, {
-      loading: 'Creating bounty...',
-      success: 'Bounty created successfully',
-      error: 'Failed to create bounty',
-    })
+      loading: "Creating bounty...",
+      success: "Bounty created successfully",
+      error: "Failed to create bounty",
+    });
 
     try {
       const issueUrlValidation = githubIssueSchema.parse(issueUrl);
       const tokenAmountValidation = z.string().nonempty().parse(tokenAmount);
       if (!issueUrlValidation || !tokenAmountValidation) {
-        throw new Error('Invalid input');
+        throw new Error("Invalid input");
       }
 
       // Create bounty
@@ -158,15 +167,24 @@ export default function CreateBounty() {
       console.error(err);
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div>
-      <h1 className={cn("text-4xl font-semibold tracking-tight text-zinc-700", coromorantGaramond.className)}>Create bounty</h1>
-      <p className="mt-2 text-zinc-500">Create a new bounty and get it published on GitHub.</p>
+      <h1
+        className={cn(
+          "text-4xl font-semibold tracking-tight text-zinc-700",
+          coromorantGaramond.className
+        )}
+      >
+        Create bounty
+      </h1>
+      <p className="mt-2 text-zinc-500">
+        Create a new bounty and get it published on GitHub.
+      </p>
 
       <div className="mt-10 pb-20">
-        <div className="flex flex-wrap md:flex-nowrap items-start gap-5">  
+        <div className="flex flex-wrap md:flex-nowrap items-start gap-5">
           <Input
             isRequired
             type="text"
@@ -175,16 +193,19 @@ export default function CreateBounty() {
             labelPlacement="outside"
             description="URL or short identifier of the issue"
             variant="bordered"
-            value={issueUrl || ''}
+            value={issueUrl || ""}
             onChange={handleIssueUrlChange}
             isInvalid={isDirty && !isIssueUrlValid}
             errorMessage={error}
-            endContent={isDirty && isIssueUrlValid && (
-              <div className="p-0.5 rounded-full bg-green-500">
-                <CheckIcon color="white" />
-              </div>
-            )}
-            color={(isDirty && isIssueUrlValid) ? 'success' : 'default'}
+            endContent={
+              isDirty &&
+              isIssueUrlValid && (
+                <div className="p-0.5 rounded-full bg-green-500">
+                  <CheckIcon color="white" />
+                </div>
+              )
+            }
+            color={isDirty && isIssueUrlValid ? "success" : "default"}
             // isDisabled={loading} // Disable input while loading
           />
 
@@ -197,11 +218,11 @@ export default function CreateBounty() {
             labelPlacement="outside"
             description="Amount you'll pay beforehand which goes to contributor"
             variant="bordered"
-            value={tokenAmount || ''}
+            value={tokenAmount || ""}
             onChange={handleTokenAmountChange}
             startContent={
               <div className="pointer-events-none flex items-center">
-                { token?.logo }
+                {token?.logo}
               </div>
             }
             endContent={
@@ -222,40 +243,52 @@ export default function CreateBounty() {
 
         <Skeleton isLoaded={!loading} className="mt-5 rounded">
           <div className="mt-5">
-            { issue && (
+            {issue && (
               <>
                 <h1 className="text-3xl font-medium tracking-tight text-zinc-800">
                   {issue.title}
-                  <span className="text-zinc-500 font-normal">&nbsp;#{issue.number}</span>
+                  <span className="text-zinc-500 font-normal">
+                    &nbsp;#{issue.number}
+                  </span>
                 </h1>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <div className="flex items-center gap-2">
-                    { issue.state === 'open' && (
+                    {issue.state === "open" && (
                       <p className="flex items-center gap-0.5 py-1 px-2 pr-3 rounded-full bg-green-600 border border-green-600 w-fit">
                         <IssueOpenSymbol color="#ffffff" height="14" />
-                        <span className="text-white text-sm font-medium">Open</span>
+                        <span className="text-white text-sm font-medium">
+                          Open
+                        </span>
                       </p>
                     )}
-                    { issue.state === 'closed' && (
+                    {issue.state === "closed" && (
                       <p className="flex items-center gap-0.5 py-1 px-2 pr-3 rounded-full bg-purple-600 border border-purple-600 w-fit">
                         <IssueCloseSymbol color="#ffffff" height="14" />
-                        <span className="text-white text-sm font-medium">Closed</span>
+                        <span className="text-white text-sm font-medium">
+                          Closed
+                        </span>
                       </p>
                     )}
-                    { (Number(tokenAmount) > 0) && (
+                    {Number(tokenAmount) > 0 && (
                       <p className="flex items-center gap-1 py-1 px-2 pr-3 rounded-full bg-green-100 border border-green-500 text-green-700 w-fit">
-                        { token?.logo }
-                        <span className="text-sm font-medium tracking-tight text-nowrap">{ tokenAmount } { token?.symbol }</span>
+                        {token?.logo}
+                        <span className="text-sm font-medium tracking-tight text-nowrap">
+                          {tokenAmount} {token?.symbol}
+                        </span>
                       </p>
                     )}
                   </div>
 
                   <p className="text-sm text-zinc-500">
-                    <span className="font-semibold hover:underline"><a href={issue.user?.html_url}>{issue.user?.login}</a></span> opened this issue {fromNow(issue.created_at)} · {issue.comments} comments
+                    <span className="font-semibold hover:underline">
+                      <a href={issue.user?.html_url}>{issue.user?.login}</a>
+                    </span>{" "}
+                    opened this issue {fromNow(issue.created_at)} ·{" "}
+                    {issue.comments} comments
                   </p>
                 </div>
-                
+
                 <hr className="mt-3 mb-5 border-zinc-200" />
 
                 <div className="flex items-start gap-3 w-full overflow-x-scroll">
@@ -270,7 +303,10 @@ export default function CreateBounty() {
                   <div className="border border-zinc-200 rounded-md">
                     <div className="bg-zinc-50 px-4 py-2 rounded-t-md border-b border-zinc-200">
                       <p className="text-sm text-zinc-500">
-                        <span className="font-semibold hover:underline"><a href={issue.user?.html_url}>{issue.user?.login}</a></span> commented {fromNow(issue.created_at)}
+                        <span className="font-semibold hover:underline">
+                          <a href={issue.user?.html_url}>{issue.user?.login}</a>
+                        </span>{" "}
+                        commented {fromNow(issue.created_at)}
                       </p>
                     </div>
                     <div className="p-4 py-3 text-sm">
@@ -278,11 +314,13 @@ export default function CreateBounty() {
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeHighlight]}
                         className="prose prose-zinc text-sm"
-                      >{issue.body}</ReactMarkdown>
+                      >
+                        {issue.body}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
-                
+
                 <hr className="my-5 border-zinc-200" />
               </>
             )}
@@ -290,7 +328,19 @@ export default function CreateBounty() {
         </Skeleton>
 
         <div className="mt-5">
-          <Button disabled={!isValid || !isIssueUrlValid || isSubmitting || !tokenAmount || Number(tokenAmount) <= 0 || !issueUrl} onClick={handleCreateBounty} color="black" className="flex items-center gap-1.5">
+          <Button
+            disabled={
+              !isValid ||
+              !isIssueUrlValid ||
+              isSubmitting ||
+              !tokenAmount ||
+              Number(tokenAmount) <= 0 ||
+              !issueUrl
+            }
+            onClick={handleCreateBounty}
+            color="black"
+            className="flex items-center gap-1.5"
+          >
             <PlusOutlinedIcon color="#ffffff" />
             Create bounty
           </Button>
