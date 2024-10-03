@@ -5,9 +5,9 @@ import {
   PORT,
 } from "./config/environment";
 import authRoutes from "./routes/auth.routes";
-// import userRoutes from "./routes/user.routes";
-// import bountyRoutes from "./routes/bounty.routes";
-// import transactionRoutes from "./routes/transaction.routes";
+import userRoutes from "./routes/user.routes";
+import bountyRoutes from "./routes/bounty.routes";
+import transactionRoutes from "./routes/transaction.routes";
 import passport from "passport";
 import session from "express-session";
 import cors from "cors";
@@ -45,9 +45,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/v1/auth", authRoutes);
-// app.use("/v1/user", userRoutes);
-// app.use("/v1/bounty", bountyRoutes);
-// app.use("/v1/transaction", transactionRoutes);
+app.use("/v1/user", userRoutes);
+app.use("/v1/bounty", bountyRoutes);
+app.use("/v1/transaction", transactionRoutes);
 
 app.get("/", (req, res) => {
   return res.send("only possible on solana");

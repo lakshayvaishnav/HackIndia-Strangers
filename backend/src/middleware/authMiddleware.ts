@@ -17,11 +17,11 @@ export function authMiddleware(
   try {
     if (req.isAuthenticated()) {
       const decoded = jwt.verify(authToken, JWT_SECRET);
-      console.log("decoded : ", decoded);
-      req.body.usesr = decoded;
+      console.log("decoded: ", decoded);
+      req.body.user = decoded;
       next();
     } else {
-      throw new Error("unauthorised user");
+      throw new Error("unauthorized user");
     }
   } catch (error) {
     return res.status(401).json({
@@ -37,14 +37,14 @@ export function gitAuthMiddleware(
 ) {
   try {
     if (req.isAuthenticated()) {
-      console.log("you are authenticated user : ", req.user);
+      console.log("you are authenticated user: ", req.user);
       return next();
     } else {
       throw new Error("unauthorized user");
     }
   } catch (error: any) {
     return res.status(401).json({
-      error: error.message ? error.message : "Unauthorized user",
+      error: error.message ? error.message : "unauthorized user",
     });
   }
 }
