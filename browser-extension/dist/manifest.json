@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "SolPayouts",
+  "version": "0.1.0",
+  "description": "Bounties on Github using Solana",
+  "permissions": ["tabs", "storage", "cookies", "activeTab", "nativeMessaging"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["http://localhost:8080/*", "https://github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["index.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["pageScript.js"],
+      "matches": ["https://github.com/*"]
+    }
+  ],
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
+  }
+}

@@ -1,0 +1,1 @@
+(()=>{var e=document.createElement("div");e.id="react-root",document.body.appendChild(e);var t=document.createElement("script");t.src=chrome.runtime.getURL("bundle.js"),(document.head||document.documentElement).appendChild(t)})();
