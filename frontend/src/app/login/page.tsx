@@ -190,7 +190,7 @@ export default function LoginPage() {
             <h1
               className={cn(
                 interTight.className,
-                "text-2xl font-semibold tracking-tight flex items-center gap-2 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text"
+                "text-2xl font-semibold tracking-tight text-white flex items-center gap-2 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text"
               )}
             >
               <SolanaLogo height="20" color="#ffffff" />

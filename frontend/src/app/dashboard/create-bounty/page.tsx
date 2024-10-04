@@ -1,4 +1,5 @@
 "use client";
+
 import { coromorantGaramond } from "@/lib/fonts";
 import { cn, fromNow } from "@/lib/utils";
 import { Avatar, Input, Skeleton } from "@nextui-org/react";
@@ -10,7 +11,7 @@ import IssueOpenSymbol from "@/components/img/IssueOpenSymbol";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
-import "highlight.js/styles/github.css";
+import "highlight.js/styles/github-dark.css";
 import IssueCloseSymbol from "@/components/img/IssueCloseSymbol";
 import USDCLogo from "@/components/img/USDCLogo";
 import SolanaLogo from "@/components/img/SolanaLogo";
@@ -63,7 +64,6 @@ export default function CreateBounty() {
       setIsIssueUrlValid(true);
       setError(null);
 
-      // Extract owner, repo, and issue number from the URL using match
       const match = inputValue.match(
         /^https:\/\/github\.com\/([\w-]+)\/([\w-]+)\/issues\/(\d+)$/
       );
@@ -71,7 +71,6 @@ export default function CreateBounty() {
 
       const [, owner, repo, issueNumber] = match;
 
-      // Fetch issue details from GitHub API
       setLoading(true);
       const response = await axios.get(
         `https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`
@@ -91,31 +90,28 @@ export default function CreateBounty() {
     }
   };
 
-  const handleTokenAmountChange = (e: any) => {
+  const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     if (/^\d*\.?\d*$/.test(inputValue)) {
-      // Regex to allow only numbers and decimal points
       setTokenAmount(inputValue);
     }
   };
 
-  const handleTokenChange = (e: any) => {
+  const handleTokenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     switch (e.target.value) {
       case "USDC":
-        const USDCToken = {
+        setToken({
           name: "USDC",
           symbol: "USDC",
           logo: <USDCLogo height="14" />,
-        };
-        setToken(USDCToken);
+        });
         break;
       case "SOL":
-        const SOLToken = {
+        setToken({
           name: "Solana",
           symbol: "SOL",
           logo: <SolanaLogo height="12" />,
-        };
-        setToken(SOLToken);
+        });
         break;
       default:
         console.error("Invalid token selected");
@@ -129,9 +125,6 @@ export default function CreateBounty() {
       return;
     }
 
-    // TODO: do not allow the same issue to be submitted twice, create one api for fetching and ensuring any bounties as well directly from backend
-    // TODO: handle the duplicate entry in frontend as well
-    // FUTURE: allow users to put multiple entries and show the total amount via extension
     const createBountyPromise = axios.post(
       `${API_URL}/v1/bounty`,
       {
@@ -157,8 +150,7 @@ export default function CreateBounty() {
         throw new Error("Invalid input");
       }
 
-      // Create bounty
-      const response = await createBountyPromise;
+      await createBountyPromise;
       setIssueUrl(null);
       setTokenAmount(null);
       setIsSubmitting(false);
@@ -170,16 +162,16 @@ export default function CreateBounty() {
   };
 
   return (
-    <div>
+    <div className="bg-gradient-to-b from-black to-purple-950 text-white min-h-screen p-8">
       <h1
         className={cn(
-          "text-4xl font-semibold tracking-tight text-zinc-700",
+          "text-4xl font-semibold tracking-tight",
           coromorantGaramond.className
         )}
       >
         Create bounty
       </h1>
-      <p className="mt-2 text-zinc-500">
+      <p className="mt-2 text-purple-300">
         Create a new bounty and get it published on GitHub.
       </p>
 
@@ -206,7 +198,12 @@ export default function CreateBounty() {
               )
             }
             color={isDirty && isIssueUrlValid ? "success" : "default"}
-            // isDisabled={loading} // Disable input while loading
+            classNames={{
+              label: "text-purple-300",
+              description: "text-purple-400",
+              input: "bg-purple-900/50 text-white placeholder:text-purple-400",
+              inputWrapper: "border-purple-700",
+            }}
           />
 
           <Input
@@ -228,7 +225,7 @@ export default function CreateBounty() {
             endContent={
               <div className="flex items-center">
                 <select
-                  className="outline-none border-0 bg-transparent text-zinc-500 text-small"
+                  className="outline-none border-0 bg-transparent text-purple-300 text-small"
                   id="token"
                   name="token"
                   onChange={handleTokenChange}
@@ -238,16 +235,22 @@ export default function CreateBounty() {
                 </select>
               </div>
             }
+            classNames={{
+              label: "text-purple-300",
+              description: "text-purple-400",
+              input: "bg-purple-900/50 text-white placeholder:text-purple-400",
+              inputWrapper: "border-purple-700",
+            }}
           />
         </div>
 
-        <Skeleton isLoaded={!loading} className="mt-5 rounded">
+        <Skeleton isLoaded={!loading} className="mt-5 rounded bg-purple-900/50">
           <div className="mt-5">
             {issue && (
               <>
-                <h1 className="text-3xl font-medium tracking-tight text-zinc-800">
+                <h1 className="text-3xl font-medium tracking-tight text-white">
                   {issue.title}
-                  <span className="text-zinc-500 font-normal">
+                  <span className="text-purple-300 font-normal">
                     &nbsp;#{issue.number}
                   </span>
                 </h1>
@@ -271,7 +274,7 @@ export default function CreateBounty() {
                       </p>
                     )}
                     {Number(tokenAmount) > 0 && (
-                      <p className="flex items-center gap-1 py-1 px-2 pr-3 rounded-full bg-green-100 border border-green-500 text-green-700 w-fit">
+                      <p className="flex items-center gap-1 py-1 px-2 pr-3 rounded-full bg-purple-800 border border-purple-600 text-white w-fit">
                         {token?.logo}
                         <span className="text-sm font-medium tracking-tight text-nowrap">
                           {tokenAmount} {token?.symbol}
@@ -280,7 +283,7 @@ export default function CreateBounty() {
                     )}
                   </div>
 
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-purple-300">
                     <span className="font-semibold hover:underline">
                       <a href={issue.user?.html_url}>{issue.user?.login}</a>
                     </span>{" "}
@@ -289,7 +292,7 @@ export default function CreateBounty() {
                   </p>
                 </div>
 
-                <hr className="mt-3 mb-5 border-zinc-200" />
+                <hr className="mt-3 mb-5 border-purple-700" />
 
                 <div className="flex items-start gap-3 w-full overflow-x-scroll">
                   <Avatar
@@ -300,20 +303,20 @@ export default function CreateBounty() {
                     className="min-w-fit"
                   />
 
-                  <div className="border border-zinc-200 rounded-md">
-                    <div className="bg-zinc-50 px-4 py-2 rounded-t-md border-b border-zinc-200">
-                      <p className="text-sm text-zinc-500">
+                  <div className="border border-purple-700 rounded-md">
+                    <div className="bg-purple-900/50 px-4 py-2 rounded-t-md border-b border-purple-700">
+                      <p className="text-sm text-purple-300">
                         <span className="font-semibold hover:underline">
                           <a href={issue.user?.html_url}>{issue.user?.login}</a>
                         </span>{" "}
                         commented {fromNow(issue.created_at)}
                       </p>
                     </div>
-                    <div className="p-4 py-3 text-sm">
+                    <div className="p-4 py-3 text-sm bg-purple-900/30">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeHighlight]}
-                        className="prose prose-zinc text-sm"
+                        className="prose prose-invert text-sm"
                       >
                         {issue.body}
                       </ReactMarkdown>
@@ -321,7 +324,7 @@ export default function CreateBounty() {
                   </div>
                 </div>
 
-                <hr className="my-5 border-zinc-200" />
+                <hr className="my-5 border-purple-700" />
               </>
             )}
           </div>
@@ -338,8 +341,8 @@ export default function CreateBounty() {
               !issueUrl
             }
             onClick={handleCreateBounty}
-            color="black"
-            className="flex items-center gap-1.5"
+            color="purple"
+            className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white"
           >
             <PlusOutlinedIcon color="#ffffff" />
             Create bounty

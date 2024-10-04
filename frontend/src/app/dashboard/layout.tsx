@@ -7,7 +7,6 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <main className={inter.className + " max-h-screen min-h-screen h-screen"}>
       <Sidebar />
@@ -16,7 +15,7 @@ export default async function DashboardLayout({
         <div className="h-[70px]"></div>
         <div className="flex">
           <div className="h-[100px] w-[250px] lg:w-[350px]"></div>
-          <div className="p-10 h-[calc(100vh-70px)] w-[calc(100vw-250px)] lg:w-[calc(100vw-350px)]">
+          <div className=" h-[calc(100vh-70px)] w-[calc(100vw-250px)] lg:w-[calc(100vw-350px)]">
             {children}
           </div>
         </div>
